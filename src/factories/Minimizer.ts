@@ -5,9 +5,16 @@ import {State} from '../model/LTS/State';
 import {StateTransition} from '../model/LTS/StateTransition';
 import {MinimalLTS} from '../model/LTS/MinimalLTS';
 
+/**
+ * This class represents the minimization process of the Rodriugues Model
+ */
 export class Minimizer {
     public static epsilon = 0.000000001;
 
+    /**
+     * This is the main method of the class that performs the minimization of a clts and returns a MinimalLTS
+     * @param clts the clts that should be minimized
+     */
     public static minimize(clts: ComponentLabelledTransitionSystem) {
         // get all states except error states
         const allStates = clts.labelledTransitionSystems.map(x => x.states)
@@ -74,6 +81,12 @@ export class Minimizer {
         return new MinimalLTS(clts.componentIDX, minimalStates, initState, newFinalState);
     }
 
+    /**
+     * This method removes a LTSTranstion or tau transition from a clts
+     * @param transition the edge that should be removed
+     * @param clts the clts the transition should be removed from
+     * @private
+     */
     private static removeLTSTransition(transition: LTSTransition, clts: ComponentLabelledTransitionSystem) {
         // delete in clts
         let index = clts.transitions.indexOf(transition);
@@ -93,6 +106,11 @@ export class Minimizer {
         }
     }
 
+    /**
+     * This method removes a state transition from the clts
+     * @param transition the transition that should be removed
+     * @private
+     */
     private static removeStateTransition(transition: StateTransition) {
         const sourceState = transition.source;
         const destState = transition.destination;
@@ -106,6 +124,11 @@ export class Minimizer {
         }
     }
 
+    /**
+     * This method adds a state transition to the clts
+     * @param transition the transition that should be added
+     * @private
+     */
     private static addStateTransition(transition: StateTransition) {
         const sourceState = transition.source;
         const destState = transition.destination;
@@ -113,6 +136,12 @@ export class Minimizer {
         destState.stateTransitionsIn.push(transition);
     }
 
+    /**
+     * This method adds a LTS or tau transition to the clts
+     * @param transition the transition that should be added
+     * @param clts the clts the transition should be added to
+     * @private
+     */
     private static addLTSTransition(transition: LTSTransition, clts: ComponentLabelledTransitionSystem) {
         const sourceState = transition.sourceState;
         const destState = transition.destinationState;
@@ -122,11 +151,22 @@ export class Minimizer {
 
     }
 
+    /**
+     * This method removes a state from the clts
+     * @param state the state that should be removed
+     * @param allStates all states of the clts
+     * @private
+     */
     private static removeState(state: State, allStates: State[]) {
         const index = allStates.indexOf(state);
         allStates[index] = undefined;
     }
 
+    /**
+     * This method normalizes all outgoing state transtions of a state to 1
+     * @param states the state that should be normalized
+     * @private
+     */
     private static normalize(states: State[]) {
         states.forEach(s => {
             const sumProb = s.stateTransitionsOut.map(e => e.probability).reduce((a, b) => a + b, 0);
@@ -136,6 +176,14 @@ export class Minimizer {
         });
     }
 
+    /**
+     * This method checks if two states are identical
+     * Two states are identical if they have identical outgoing transitions.
+     * This is not true for the error and final state
+     * @param s1
+     * @param s2
+     * @private
+     */
     private static isIdentical(s1: State, s2: State): boolean {
         if (s1.type === StateType.Final || s1.type === StateType.Error) return false;
         let b1 = s1.stateTransitionsOut.length === s2.stateTransitionsOut.length;
@@ -162,6 +210,12 @@ export class Minimizer {
 
     }
 
+    /**
+     * This method combines multiple states by given the first state in the array all incoming transitions of all states
+     * in the array
+     * @param states
+     * @private
+     */
     private static combineIdenticalStates(states: State[]) {
         // find identical states
         let idents: [State, State][] = [];
@@ -190,6 +244,11 @@ export class Minimizer {
         });
     }
 
+    /**
+     * This method removes self tau loops from the clts
+     * @param clts
+     * @private
+     */
     private static removeSelfLoops(clts: ComponentLabelledTransitionSystem) {
         const selfLoops = clts.transitions.filter(e => {
             return e.sourceState === e.destinationState;
@@ -199,6 +258,14 @@ export class Minimizer {
     }
 
 
+    /**
+     * This method handles the minimization of a state according to the description given by Rodrigues
+     * @param s the state that should be handled
+     * @param allStates all states of the clts
+     * @param clts the clts
+     * @param initial indicates if this is the initial state of the whole clts
+     * @private
+     */
     private static handleState(s: State, allStates: State[], clts: ComponentLabelledTransitionSystem, initial: boolean) {
         // check all ltsTransitions in
         s.ltsTransitionsIn.forEach(ltsTransIn => {
@@ -233,6 +300,11 @@ export class Minimizer {
     }
 
 
+    /**
+     * This method finds and combines identical transitions in the minimized clts
+     * @param states all states in the minimized clts
+     * @private
+     */
     private static combineIdenticalTransitions(states: State[]) {
         states.forEach(s => {
             const distinctDests = s.stateTransitionsOut.map(s => s.destination).filter((value, index, array) => array.indexOf(value) === index).filter(value => {
@@ -257,6 +329,12 @@ export class Minimizer {
         });
     }
 
+    /**
+     * This helper method merges multiple transition into one.
+     * This is done by deleting every transition except for one and adding up all probability values of them
+     * @param trans the transitions that should be merged
+     * @private
+     */
     private static combineTransitions(trans: StateTransition[]) {
         if (trans.length < 2) return;
         const sum = trans.map(t => t.probability).reduce((previousValue, currentValue) => previousValue + currentValue, 0);

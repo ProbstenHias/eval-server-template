@@ -3,7 +3,17 @@ import {StateTransition} from '../../model/LTS/StateTransition';
 import {State} from '../../model/LTS/State';
 import {StateType} from '../../enums/StateType';
 
+/**
+ * This class generates StateTranstitions for the LTS
+ */
 export class StateTransitionsFactory {
+    /**
+     * This method generates all state transition that are needed for an lts. It translates a bmsc into a lts
+     * @param model the clams model
+     * @param componentIDX the index of the component as in the clams model
+     * @param graph the graph
+     * @param states the states of the lts
+     */
     static getTransitions(model: Model, componentIDX: number, graph: Graph, states: State[]): Array<StateTransition> {
         const transitions = new Array<StateTransition>();
         const component = model.components[componentIDX].instances.find(instance => {

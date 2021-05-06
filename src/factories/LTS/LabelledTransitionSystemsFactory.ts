@@ -5,8 +5,16 @@ import {StatesFactory} from './StatesFactory';
 import {StateTransitionsFactory} from './StateTransitionsFactory';
 import {StateType} from '../../enums/StateType';
 
+/**
+ * This class represent the process of translating a bmsc into an lts
+ */
 export class LabelledTransitionSystemsFactory {
 
+    /**
+     * this method generates all LTSs for a component by generating the states and then the state transitions
+     * @param model the clams model
+     * @param componentIDX the index of the component
+     */
     static getLabelledTransitionSystems(model: Model, componentIDX: number): Array<LabelledTransitionSystem> {
         return model.graphs.filter((graph) => {
             return graph.getType() === GraphType.SequenceDiagram;

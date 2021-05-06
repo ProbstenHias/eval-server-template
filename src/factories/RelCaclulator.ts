@@ -2,11 +2,17 @@ import {CompositeState} from '../model/Composition/CompositeState';
 import {StateType} from '../enums/StateType';
 import {abs, det, identity, index, Matrix, subset, subtract, zeros} from 'mathjs';
 
+/**
+ * This class calculates the reliability of a system given the composite LTS
+ */
+export class RelCaclulator {
 
-export class MatrixFactory {
-
-
-    public static getMatrix(compStates: CompositeState[]) {
+    /**
+     * This lass calculates the reliability value of a system given all CompStates of the composite LTS.
+     * The calculations are consistent with Cheung's model
+     * @param compStates
+     */
+    public static getReliability(compStates: CompositeState[]) {
         // we delete all error transitions since we do not need those
         compStates.forEach(s => {
             s.transitionsOut = s.transitionsOut.filter(t => !t.isErrorTransition);
@@ -21,7 +27,7 @@ export class MatrixFactory {
         const m = zeros(compStates.length, compStates.length) as Matrix;
         compStates.forEach((cs, index) => {
             cs.transitionsOut.forEach(t => {
-                const indexToComp = compStates.indexOf(t.to);
+                const indexToComp = compStates.indexOf(t.target);
                 m.set([index, indexToComp], t.probability);
             });
         });

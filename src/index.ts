@@ -15,7 +15,7 @@ import JsonReplacementProtocol from './json-replacement-protocol';
 import {ComponentLabelledTransitionsSystemsFactory} from './factories/LTS/ComponentLabelledTransitionsSystemsFactory';
 import {Composer} from './factories/Composer';
 import {MinimalLTSCollectionFactory} from './factories/LTS/MinimalLTSCollectionFactory';
-import {MatrixFactory} from './factories/MatrixFactory';
+import {RelCaclulator} from './factories/RelCaclulator';
 
 const app = express();
 const port = 8087; // default port to listen
@@ -35,7 +35,7 @@ app.post('/', async (req, res) => {
     const model = ModelFactory.fromJSON(req.body.model);
     // Connect the model with service catalog
     await loadCatalogs(model);
-    // Find all leafs of the sub-tree of each component
+    // Find all leaves of the sub-tree of each component
     const searchSpace = listAllComponentOptions(model);
     // Call algorithm that returns best replacement options
     const replacementList = algorithm(model, searchSpace);
@@ -45,10 +45,11 @@ app.post('/', async (req, res) => {
         r['replaceWith'] = r['replaceWith'].id;
     });
 
+
     // with this we calculate the Component Labelled Transitions system for all components in the model
     const cltss = ComponentLabelledTransitionsSystemsFactory.getComponentLabelledTransitionSystems(model);
 
-    // this miminizes the cltss
+    // this minimizes the cltss
     const mins = MinimalLTSCollectionFactory.getMinimalLTSCollectionFactory(cltss);
 
     // this composes the cltss into one big lts
@@ -56,7 +57,9 @@ app.post('/', async (req, res) => {
 
     //here we get the matrix for cheung and also calculate the reliability as well
     // the name could be changed actually
-    const rel = MatrixFactory.getMatrix(c);
+    const rel = RelCaclulator.getReliability(c);
+
+
     res.json({
         result: rel.toString(),
         replacements: replacementList

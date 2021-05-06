@@ -2,6 +2,9 @@ import {State} from './State';
 import {StateTransition} from './StateTransition';
 import {LTSTransition} from './LTSTransition';
 
+/**
+ * This class represents as Labelled Transition System
+ */
 export class LabelledTransitionSystem {
     // element at index 0 is initial state
     // element at index length - 2 is end element
@@ -21,6 +24,16 @@ export class LabelledTransitionSystem {
     edgesOut: LTSTransition[];
 
 
+    /**
+     * Creates an instance of LabelledTransitionSystem
+     * @param states the nodes of the LabelledTransitionSystem
+     * @param transitions the edges of the LabelledTransitionSystem
+     * @param componentIDX the index of the component in the clams model of the LabelledTransitionSystem
+     * @param graphID the graphID as given by the clams model
+     * @param initialState the initial state of the LTS
+     * @param finalState the final state of the LTS
+     * @param errorState the error State of the LTS, is optional
+     */
     constructor(states: State[], transitions: StateTransition[], componentIDX: number, graphID: string, initialState: State, finalState: State, errorState?: State) {
         this.states = states;
         this.transitions = transitions;

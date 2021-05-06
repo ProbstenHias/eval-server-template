@@ -2,8 +2,16 @@ import {Graph, Model} from '@openclams/clams-ml';
 import {State} from '../../model/LTS/State';
 import {StateType} from '../../enums/StateType';
 
+/**
+ * This class generates States for the LTS
+ */
 export class StatesFactory {
-    //TODO no need for model if we give componentNameInGraph and edges as parameters
+    /**
+     * This method generates all states that are needed for an lts. It translates a bmsc into an lts
+     * @param model the clams model
+     * @param componentIDX the index of the component
+     * @param graph the graph
+     */
     static getStates(model: Model, componentIDX: number, graph: Graph): Array<State> {
         // get specific name of component in our graph
         const states = new Array<State>();

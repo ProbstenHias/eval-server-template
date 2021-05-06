@@ -3,8 +3,17 @@ import {Arrow, Model, State} from '@openclams/clams-ml';
 import {LabelledTransitionSystem} from '../../model/LTS/LabelledTransitionSystem';
 import {GraphType} from '../../enums/GraphType';
 
+/**
+ * This class generates the transitions of a clts
+ */
 export class LTSTransitionsFactory {
 
+    /**
+     * This method generates all tau transition of a clts according to the hmsc
+     * @param model the clams model
+     * @param componentIDX the indes of the component
+     * @param LTSs all LTSs that belong to the component
+     */
     static getLTSTransitions(model: Model, componentIDX: number, LTSs: LabelledTransitionSystem[]): Array<LTSTransition> {
         const transitions = new Array<LTSTransition>();
         const userProfile = model.graphs.find(x => x.getType() === GraphType.UserProfile);
